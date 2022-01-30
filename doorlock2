@@ -1,0 +1,240 @@
+#include<reg51.h>  			
+#include<string.h>
+
+sbit RS = P3^0; 
+sbit EN = P3^1;
+sbit IN1 =P3^2;
+sbit IN2 = P3^3;
+sbit Buzz =P3^4;		 
+sbit r1=P1^0;
+sbit r2=P1^1;
+sbit r3=P1^2;
+sbit r4=P1^3;
+sbit c1=P1^4;
+sbit c2=P1^5;
+sbit c3=P1^6;
+sbit c4=P1^7;
+int i=0;
+char *ptr;
+
+void delay(int a)			//to create a delay of time.
+{
+	int i,j;
+	for(i=0;i<a;i++)
+	for(j=0;j<255;j++);
+}
+void cmd(char cm)			//to send a command on LCD
+{
+	P2 = cm;
+	RS = 0;
+	EN = 1;
+	delay(1);
+	EN = 0;
+}
+void dat(char dt)		//to send data to LCD
+{
+	P2 = dt;
+	RS = 1;
+	EN = 1;
+	delay(1);
+	EN = 0;
+}
+
+void display(char *lcd)   //Display function used to display data on LCD
+{
+	while(*lcd != '\0')
+	{
+		dat(*lcd);
+		lcd++;
+	}
+}
+void keypad(void);
+
+void lcdint()
+{
+	cmd(0x01);     //Clear display screen
+	cmd(0x38);     //used for 8-bitdata initialization.
+	cmd(0x0E);		 //Display on, Cursor on
+	cmd(0x80);		 //Move cursor to the beginning of first line
+	
+}
+
+void main()
+{	
+	char pass[5] = "30+1";
+	char pass2[5];
+	int w=2;
+	ptr = pass2;
+	lcdint();
+	display("Password-");
+	pass2[4]='\0';
+	
+	while(i<4)
+	{ keypad();
+	}
+	
+	while(i==4)
+		{
+
+if ((strcmp(pass, pass2)) == 0)
+				{
+	cmd(0xC0);
+	display("Correct");
+	IN1 = 1;
+	IN2 = 0;
+	delay(100);	
+				}
+else
+	{
+	cmd(0xC0);
+	display("Incorrect");
+	w=2;
+	IN1 = 0;
+	IN2 = 0;
+	delay(100);
+
+		while(w==2)
+			{
+		Buzz= 0;
+		delay(100);
+		Buzz= 1;
+		delay(100);
+			}
+ }
+}
+}
+		void keypad(){
+    c1=c2=c3=c4=1;
+    r1=0;r2=1;r3=1;r4=1;
+       if(c1==0){
+        
+					*(ptr+i)='7';
+					dat('7');
+					delay(200);
+					cmd(0x06);
+					i++;
+					} else if(c2==0) {
+        
+					*(ptr+i)='8';
+					dat('8');
+					delay(200);
+					cmd(0x06);
+					i++;
+					} else if(c3==0) {
+        
+					*(ptr+i)='9';
+					dat('9');
+					delay(200);
+					cmd(0x06);
+					i++;
+					} else if(c4==0) {
+       
+					*(ptr+i)='/';
+					dat('/');
+					delay(200);
+					cmd(0x06);
+					i++;
+					}
+					
+    r1=1;r2=0;r3=1;r4=1;
+    if(c1==0){
+        
+					*(ptr+i)='4';
+					dat('4');
+					delay(200);
+					cmd(0x06);
+					i++;
+					} else if(c2==0) {
+        
+					*(ptr+i)='5';
+					dat('5');
+					delay(200);
+					cmd(0x06);
+					i++;
+					} else if(c3==0) {
+        
+					*(ptr+i)='6';
+					dat('6');
+					delay(200);
+					cmd(0x06);
+					i++;
+					} else if(c4==0) {
+					*(ptr+i)='*';
+					dat('*');
+					delay(200);
+					cmd(0x06);
+					i++;
+					}
+					
+    r1=1;r2=1;r3=0;r4=1;
+    if(c1==0){
+        
+					*(ptr+i)='1';
+					dat('1');
+					delay(200);
+					cmd(0x06);
+					i++;
+					
+    } else if(c2==0) {
+        
+					*(ptr+i)='2';
+					dat('2');
+					delay(200);
+					cmd(0x06);
+					i++;
+					
+    } else if(c3==0) {
+        
+					*(ptr+i)='3';
+					dat('3');
+					delay(200);
+					cmd(0x06);
+					i++;
+					
+    } else if(c4==0) {
+       
+					*(ptr+i)='-';
+					dat('-');
+					delay(200);
+					cmd(0x06);
+					i++;
+					
+    }
+    r1=1;r2=1;r3=1;r4=0;
+    if(c1==0){
+			cmd(0x01);
+			i=0;
+			main();
+				} else if(c2==0) {
+       
+					*(ptr+i)='0';
+					dat('0');
+					delay(200);
+					cmd(0x06);
+					i++;
+					
+    } else if(c3==0) {
+        
+					*(ptr+i)='=';
+					dat('=');
+					delay(200);
+					cmd(0x06);
+					i++;
+					
+    } else if(c4==0) {
+        
+					*(ptr+i)='+';
+					dat('+');
+					delay(200);
+					cmd(0x06);
+					i++;
+					
+    }
+}
+		
+	
+
+
+
+		
+	
